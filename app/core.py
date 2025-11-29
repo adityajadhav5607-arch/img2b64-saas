@@ -93,7 +93,7 @@ def run_batch(
     quality_floor: int,
     log=print
 ):
-    patterns = ["*.jpg", "*.jpeg", "*.JPG", "*.JPEG"]
+    patterns = ["*.jpg", "*.jpeg", "*.JPG", "*.JPEG", "*.png", "*.PNG"]
     files = []
     for pat in patterns:
         files += list(input_dir.rglob(pat) if recurse else input_dir.glob(pat))

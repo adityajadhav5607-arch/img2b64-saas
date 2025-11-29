@@ -39,13 +39,15 @@ async def convert_images(
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
 
-    # Only JPG/JPEG files, to match your script
+
+    # Allow JPG/JPEG/PNG files
     for f in files:
-        if not f.filename.lower().endswith((".jpg", ".jpeg")):
+        if not f.filename.lower().endswith((".jpg", ".jpeg", ".png")):
             raise HTTPException(
                 status_code=400,
-                detail=f"Only JPG/JPEG files allowed. Invalid: {f.filename}",
+                detail=f"Only JPG/JPEG/PNG files allowed. Invalid: {f.filename}",
             )
+
 
     # Temp working directory
     work_id = str(uuid.uuid4())
