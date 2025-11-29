@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ConvertBase64 – Bulk Image → Base64</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f5f5ff;
+      color: #161826;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      background: white;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 20px;
+      color: #4c4cff;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 2px solid #4c4cff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon span {
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-links a:hover {
+      color: #111827;
+    }
+
+    .nav-button {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #4c4cff, #a855f7);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(76, 76, 255, 0.35);
+    }
+
+    .nav-button:hover {
+      filter: brightness(1.05);
+    }
+
+    .page {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 16px 60px;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .hero-title span {
+      color: #4c4cff;
+    }
+
+    .hero-subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #6b7280;
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px 20px 28px;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .dropzone {
+      border-radius: 20px;
+      border: 2px dashed #c7d2fe;
+      background: #f9f9ff;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.1s;
+    }
+
+    .dropzone.dragover {
+      border-color: #4c4cff;
+      background: #eef2ff;
+      transform: translateY(-1px);
+    }
+
+    .drop-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      border: 2px solid #c7d2fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4c4cff;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .drop-main-text {
+      color: #4c4cff;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .drop-sub-text {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .status strong {
+      color: #111827;
+    }
+
+    .primary-btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: none;
+      background: #4c4cff;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 20px rgba(76, 76, 255, 0.3);
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.05);
+    }
+
+    .file-chip {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #4c4cff;
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        padding: 12px 16px;
+      }
+      .hero-title {
+        font-size: 26px;
+      }
+      .card {
+        padding: 18px 16px 20px;
+      }
+      .dropzone {
+        padding: 24px 16px;
+      }
+      .bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .bottom-row button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="logo">
+      <div class="logo-icon"><span>☁</span></div>
+      <span>ConvertBase64</span>
+    </div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">APIs</a>
+      <a href="#">Pricing</a>
+      <a href="#">About</a>
+      <button class="nav-button">Go Premium</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <h1 class="hero-title">Bulk <span>Image → Base64</span> Converter</h1>
+    <p class="hero-subtitle">
+      Upload a folder of JPGs and instantly generate Base64 text files plus a manifest.
+      Perfect for developers, e-commerce stores, and automations.
+    </p>
+
+    <section class="card">
+      <div id="dropzone" class="dropzone">
+        <div class="drop-icon">↑</div>
+        <div class="drop-main-text">Click, or drop your PNG/JPG/JPEG files here</div>
+        <div class="drop-sub-text">PNG, JPG, and JPEG formats supported. Files stay on server only for processing.</div>
+        <input id="fileInput" class="hidden-input" type="file" accept=".jpg,.jpeg" multiple />
+      </div>
+
+      <div id="fileChip" class="file-chip"></div>
+
+      <div class="bottom-row">
+        <p id="status" class="status">
+          <strong>Status:</strong> Waiting for files…
+        </p>
+        <button id="convertBtn" class="primary-btn">
+          Convert to Base64
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = "http://127.0.0.1:8000/api/convert"; // change to your live URL later
+
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const statusEl = document.getElementById("status");
+    const convertBtn = document.getElementById("convertBtn");
+    const fileChip = document.getElementById("fileChip");
+
+    let selectedFiles = [];
+
+    function updateFileChip() {
+      if (!selectedFiles.length) {
+        fileChip.textContent = "";
+        return;
+      }
+      fileChip.textContent = `${selectedFiles.length} file(s) selected`;
+    }
+
+    dropzone.addEventListener("click", () => fileInput.click());
+
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    });
+
+    dropzone.addEventListener("dragleave", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      const files = Array.from(e.dataTransfer.files).filter(f =>
+        f.name.toLowerCase().endsWith(".jpg") ||
+        f.name.toLowerCase().endsWith(".jpeg")
+      );
+      if (!files.length) {
+        alert("Please drop JPG / JPEG files only.");
+        return;
+      }
+      selectedFiles = files;
+      updateFileChip();
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      selectedFiles = Array.from(e.target.files);
+      updateFileChip();
+    });
+
+    convertBtn.addEventListener("click", async () => {
+      if (!selectedFiles.length) {
+        alert("Select at least one JPG/JPEG file first.");
+        return;
+      }
+
+      const fd = new FormData();
+      for (const f of selectedFiles) {
+        fd.append("files", f);
+      }
+
+      statusEl.innerHTML = "<strong>Status:</strong> Uploading & converting…";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: fd,
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          statusEl.innerHTML = `<strong>Status:</strong> Error ${res.status} – ${text}`;
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "converted_base64.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        statusEl.innerHTML = "<strong>Status:</strong> Done! Download started.";
+      } catch (err) {
+        console.error(err);
+        statusEl.innerHTML = `<strong>Status:</strong> Unexpected error – ${err}`;
+      }
+    });
+  </script>
+</body>
+</html>
