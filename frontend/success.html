@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Payment Successful – ConvertBase64</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      background: #f5f5ff;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      max-width: 480px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      text-align: center;
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      margin: 0 auto 12px;
+      border: 3px solid #22c55e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: #22c55e;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .session-id {
+      font-size: 12px;
+      color: #4b5563;
+      background: #f3f4ff;
+      border-radius: 999px;
+      display: inline-block;
+      padding: 4px 10px;
+      margin-bottom: 18px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #4c4cff, #a855f7);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(76, 76, 255, 0.35);
+    }
+    .btn:hover {
+      filter: brightness(1.05);
+    }
+    .note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">✓</div>
+    <h1>Payment successful</h1>
+    <p>
+      Thank you for purchasing access to <strong>ConvertBase64</strong>.<br/>
+      You can now use the bulk Image → Base64 converter.
+    </p>
+    <div id="sessionInfo" class="session-id" style="display:none;"></div>
+    <a href="./" class="btn">
+      Start Converting
+    </a>
+    <div class="note">
+      Keep this browser/tab open and use the same device for best results.
+    </div>
+  </div>
+
+  <script>
+    // Read session_id from query string (for future paywall use)
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+    const infoEl = document.getElementById("sessionInfo");
+
+    if (sessionId && infoEl) {
+      // Show a truncated version so user knows it worked
+      const shortId = sessionId.length > 12
+        ? sessionId.slice(0, 6) + "..." + sessionId.slice(-4)
+        : sessionId;
+
+      infoEl.textContent = "Session ID: " + shortId;
+      infoEl.style.display = "inline-block";
+
+      // In Step C, we'll send this to the backend to mark the session as paid.
+      // For now we just display it for debugging / reassurance.
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Payment Cancelled – ConvertBase64</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      background: #f5f5ff;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      max-width: 480px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      text-align: center;
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      margin: 0 auto 12px;
+      border: 3px solid #f97316;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #f97316;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4c4cff, #a855f7);
+      color: white;
+      box-shadow: 0 8px 20px rgba(76, 76, 255, 0.3);
+    }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #4b5563;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+    .btn-ghost:hover {
+      background: #f3f4ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">!</div>
+    <h1>Payment cancelled</h1>
+    <p>
+      Your Stripe checkout was cancelled or closed.<br/>
+      No charge was made to your card.
+    </p>
+
+    <div class="btn-row">
+      <a href="./" class="btn btn-ghost">Back to converter</a>
+      <button class="btn btn-primary" onclick="goBackToCheckout()">
+        Try again
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function goBackToCheckout() {
+      // For now, just send them back to the main page where they can click "Go Premium" again.
+      window.location.href = "./";
+    }
+  </script>
+</body>
+</html>
