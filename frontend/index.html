@@ -245,14 +245,15 @@
       <a href="#">APIs</a>
       <a href="#">Pricing</a>
       <a href="#">About</a>
-      <button class="nav-button">Go Premium</button>
+      <!-- Go Premium now triggers Stripe checkout -->
+      <button class="nav-button" onclick="startCheckout('monthly')">Go Premium</button>
     </div>
   </header>
 
   <main class="page">
     <h1 class="hero-title">Bulk <span>Image → Base64</span> Converter</h1>
     <p class="hero-subtitle">
-      Upload a folder of JPGs and instantly generate Base64 text files plus a manifest.
+      Upload a folder of PNG/JPGs and instantly generate Base64 text files plus a manifest.
       Perfect for developers, e-commerce stores, and automations.
     </p>
 
@@ -261,7 +262,8 @@
         <div class="drop-icon">↑</div>
         <div class="drop-main-text">Click, or drop your PNG/JPG/JPEG files here</div>
         <div class="drop-sub-text">PNG, JPG, and JPEG formats supported. Files stay on server only for processing.</div>
-        <input id="fileInput" class="hidden-input" type="file" accept=".jpg,.jpeg" multiple />
+        <!-- accept now includes PNG -->
+        <input id="fileInput" class="hidden-input" type="file" accept=".jpg,.jpeg,.png" multiple />
       </div>
 
       <div id="fileChip" class="file-chip"></div>
@@ -278,7 +280,13 @@
   </main>
 
   <script>
-    const API_URL = "https://img2b64-saas.onrender.com/api/convert";
+    // For local testing, you can swap BACKEND_BASE:
+    // const BACKEND_BASE = "http://127.0.0.1:8000";
+    // For live Render backend:
+    const BACKEND_BASE = "https://img2b64-saas.onrender.com";
+
+    const API_URL = `${BACKEND_BASE}/api/convert`;
+    const CHECKOUT_ENDPOINT = `${BACKEND_BASE}/create-checkout-session`;
 
     const dropzone = document.getElementById("dropzone");
     const fileInput = document.getElementById("fileInput");
@@ -294,6 +302,51 @@
         return;
       }
       fileChip.textContent = `${selectedFiles.length} file(s) selected`;
+    }
+
+    // Stripe checkout starter
+    async function startCheckout(plan) {
+      try {
+        if (statusEl) {
+          statusEl.innerHTML = `<strong>Status:</strong> Redirecting to Stripe (${plan})…`;
+        }
+
+        const res = await fetch(CHECKOUT_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ plan }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Checkout error:", text);
+          alert("Error starting checkout: " + text);
+          if (statusEl) {
+            statusEl.innerHTML = `<strong>Status:</strong> Error starting checkout.`;
+          }
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.url) {
+          alert("Stripe URL not returned.");
+          if (statusEl) {
+            statusEl.innerHTML = `<strong>Status:</strong> Stripe URL missing.`;
+          }
+          return;
+        }
+
+        // Redirect browser to Stripe checkout
+        window.location.href = data.url;
+      } catch (err) {
+        console.error(err);
+        alert("Unexpected error starting checkout: " + err);
+        if (statusEl) {
+          statusEl.innerHTML = `<strong>Status:</strong> Unexpected checkout error.`;
+        }
+      }
     }
 
     dropzone.addEventListener("click", () => fileInput.click());
@@ -313,10 +366,11 @@
       dropzone.classList.remove("dragover");
       const files = Array.from(e.dataTransfer.files).filter(f =>
         f.name.toLowerCase().endsWith(".jpg") ||
-        f.name.toLowerCase().endsWith(".jpeg")
+        f.name.toLowerCase().endsWith(".jpeg") ||
+        f.name.toLowerCase().endsWith(".png")
       );
       if (!files.length) {
-        alert("Please drop JPG / JPEG files only.");
+        alert("Please drop JPG / JPEG / PNG files only.");
         return;
       }
       selectedFiles = files;
@@ -330,7 +384,7 @@
 
     convertBtn.addEventListener("click", async () => {
       if (!selectedFiles.length) {
-        alert("Select at least one JPG/JPEG file first.");
+        alert("Select at least one PNG/JPG/JPEG file first.");
         return;
       }
 
